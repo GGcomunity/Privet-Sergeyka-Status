@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мониторинг сервера Privet_Sergeyushka ❤️</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a2f3f 0%, #2c3e50 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        .server-card {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 30px;
+            padding: 35px;
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .server-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 35px 80px rgba(0, 0, 0, 0.5);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            font-size: 28px;
+            margin-bottom: 25px;
+            text-align: center;
+            border-bottom: 4px solid #9b59b6;
+            padding-bottom: 15px;
+            font-weight: 700;
+        }
+        
+        .server-address-banner {
+            text-align: center;
+            margin: 20px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            color: white;
+            font-weight: 700;
+            font-size: 24px;
+            word-break: break-all;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .info-grid {
+            display: grid;
+            gap: 15px;
+            margin: 25px 0;
+        }
+        
+        .info-item {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 5px solid #9b59b6;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: #7f8c8d;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .info-value {
+            font-weight: 700;
+            color: #2c3e50;
+            font-size: 18px;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 700;
+            text-align: center;
+            font-size: 20px;
+            letter-spacing: 1px;
+            width: 100%;
+        }
+        
+        .status-online {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+            box-shadow: 0 5px 20px rgba(46, 204, 113, 0.4);
+        }
+        
+        .status-offline {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            box-shadow: 0 5px 20px rgba(231, 76, 60, 0.4);
+        }
+        
+        .player-list {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 25px;
+            color: white;
+        }
+        
+        .player-list h3 {
+            margin-bottom: 15px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .player-names {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .player-name {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            color: white;
+            padding: 8px 18px;
+            border-radius: 30px;
+            font-size: 15px;
+            font-weight: 500;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.2s ease;
+        }
+        
+        .player-name:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .refresh-btn {
+            display: block;
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 60px;
+            font-size: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 25px 0 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        
+        .refresh-btn:hover:not(:disabled) {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
+        }
+        
+        .refresh-btn:active:not(:disabled) {
+            transform: translateY(0);
+        }
+        
+        .refresh-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+            opacity: 0.7;
+        }
+        
+        .error-message {
+            background: linear-gradient(135deg, #ff6b6b, #ff4757);
+            color: white;
+            padding: 20px;
+            border-radius: 20px;
+            margin: 20px 0;
+            text-align: center;
+            font-weight: 500;
+            box-shadow: 0 10px 30px rgba(255, 71, 87, 0.3);
+        }
+        
+        .debug-info {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: monospace;
+            font-size: 12px;
+            margin-top: 20px;
+            border-left: 5px solid #9b59b6;
+        }
+        
+        .update-time {
+            text-align: center;
+            margin-top: 20px;
+            color: #95a5a6;
+            font-size: 14px;
+            font-style: italic;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #9b59b6;
+            border-radius: 50%;
+            width: 70px;
+            height: 70px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 25px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .api-status {
+            font-size: 12px;
+            color: #95a5a6;
+            margin-top: 10px;
+            padding: 5px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="server-card">
+            <h1>🎮 Privet_Sergeyushka Monitor 🎮</h1>
+            
+            <div class="server-address-banner">
+                🌐 Privet_Sergeyushka.aternos.me
+            </div>
+            
+            <button class="refresh-btn" id="check-server" onclick="checkServer()">
+                🔄 ПРОВЕРИТЬ СТАТУС
+            </button>
+            
+            <div id="server-status-container">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p style="color: #7f8c8d; font-size: 18px;">Проверка сервера...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Массив API для проверки (пробуем по очереди)
+        const APIs = [
+            'https://api.mcsrvstat.us/2/',
+            'https://mcapi.us/server/status?ip=',
+            'https://api.minetools.eu/ping/'
+        ];
+
+        async function checkServerWithTimeout(promise, timeoutMs) {
+            let timeoutHandle;
+            const timeoutPromise = new Promise((_, reject) => {
+                timeoutHandle = setTimeout(() => reject(new Error('Таймаут запроса')), timeoutMs);
+            });
+
+            return Promise.race([promise, timeoutPromise]).finally(() => clearTimeout(timeoutHandle));
+        }
+
+        async function checkServer() {
+            const button = document.getElementById('check-server');
+            const container = document.getElementById('server-status-container');
+            const serverIp = 'Privet_Sergeyushka.aternos.me';
+            
+            console.log('🔍 Проверка сервера:', serverIp);
+            
+            button.disabled = true;
+            button.innerHTML = '⏳ ПРОВЕРКА...';
+            
+            container.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p style="color: #7f8c8d; font-size: 18px;">Проверка сервера ${serverIp}...</p>
+                    <p style="color: #95a5a6; font-size: 14px; margin-top: 15px;">
+                        Пробуем подключиться к серверу<br>
+                        <small>Это может занять до 10 секунд</small>
+                    </p>
+                </div>
+            `;
+
+            let success = false;
+            let serverData = null;
+            let lastError = null;
+
+            // Пробуем разные API
+            for (let i = 0; i < APIs.length; i++) {
+                const api = APIs[i];
+                try {
+                    console.log(`🔄 Попытка ${i + 1}: ${api}${serverIp}`);
+                    
+                    let url;
+                    if (api.includes('minetools')) {
+                        // Для minetools нужен отдельный формат
+                        url = `${api}${serverIp}`;
+                    } else {
+                        url = `${api}${serverIp}`;
+                    }
+                    
+                    const response = await checkServerWithTimeout(
+                        fetch(url, {
+                            method: 'GET',
+                            mode: 'cors',
+                            headers: {
+                                'Accept': 'application/json'
+                            }
+                        }),
+                        5000 // 5 секунд таймаут
+                    );
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    console.log(`✅ Ответ от ${api}:`, data);
+
+                    // Обрабатываем данные в зависимости от API
+                    if (api.includes('mcsrvstat')) {
+                        serverData = {
+                            online: data.online || false,
+                            players: data.players ? {
+                                online: data.players.online || 0,
+                                max: data.players.max || 0,
+                                list: data.players.list || []
+                            } : { online: 0, max: 0, list: [] },
+                            version: data.version || 'Неизвестно',
+                            software: data.software || 'Vanilla',
+                            motd: data.motd ? (data.motd.clean || ['Нет описания']) : ['Нет описания'],
+                            ip: data.ip || serverIp,
+                            port: data.port || '25565'
+                        };
+                        success = true;
+                        break;
+                    } 
+                    else if (api.includes('mcapi')) {
+                        if (data.status === 'success') {
+                            serverData = {
+                                online: data.online || false,
+                                players: {
+                                    online: data.players ? data.players.now : 0,
+                                    max: data.players ? data.players.max : 0,
+                                    list: [] // mcapi не дает список игроков
+                                },
+                                version: data.server ? data.server.name : 'Неизвестно',
+                                software: 'Vanilla',
+                                motd: data.motd ? [data.motd] : ['Нет описания'],
+                                ip: serverIp,
+                                port: '25565'
+                            };
+                            success = true;
+                            break;
+                        }
+                    }
+                    else if (api.includes('minetools')) {
+                        if (data.error) {
+                            throw new Error(data.error);
+                        }
+                        serverData = {
+                            online: true,
+                            players: {
+                                online: data.players ? data.players.online : 0,
+                                max: data.players ? data.players.max : 0,
+                                list: [] // minetools не дает список
+                            },
+                            version: data.version ? data.version.name : 'Неизвестно',
+                            software: 'Vanilla',
+                            motd: data.description ? [data.description] : ['Нет описания'],
+                            ip: serverIp,
+                            port: data.port || '25565'
+                        };
+                        success = true;
+                        break;
+                    }
+
+                } catch (error) {
+                    console.log(`❌ Ошибка с API ${api}:`, error.message);
+                    lastError = error;
+                    continue;
+                }
+            }
+
+            if (success && serverData) {
+                displayServerStatus(serverData, serverIp);
+            } else {
+                // Если все API не сработали, но сервер включен (по словам пользователя)
+                // Показываем сообщение о возможных проблемах
+                container.innerHTML = `
+                    <div class="error-message">
+                        <h3 style="margin-bottom: 15px;">⚠️ Не удалось получить данные</h3>
+                        <p>Сервер Privet_Sergeyushka.aternos.me не отвечает на запросы API.</p>
+                        <p style="margin-top: 15px; font-size: 14px;">
+                            Возможные причины:<br>
+                            • Сервер еще загружается (подождите 1-2 минуты)<br>
+                            • Aternos блокирует внешние запросы<br>
+                            • Проблемы с DNS (попробуйте .aternos.org вместо .aternos.me)<br>
+                            • Сервер в режиме сна
+                        </p>
+                        <p style="margin-top: 15px;">
+                            <strong>Но если вы видите, что сервер работает в игре - значит всё хорошо!</strong>
+                        </p>
+                        <p style="margin-top: 10px; font-size: 12px;">
+                            Ошибка: ${lastError ? lastError.message : 'Неизвестная ошибка'}
+                        </p>
+                    </div>
+                    <div class="update-time">
+                        Последняя попытка: ${new Date().toLocaleTimeString('ru-RU')}
+                    </div>
+                `;
+            }
+
+            button.disabled = false;
+            button.innerHTML = '🔄 ПРОВЕРИТЬ СТАТУС';
+        }
+
+        function displayServerStatus(data, serverIp) {
+            const container = document.getElementById('server-status-container');
+            
+            const isOnline = data.online === true;
+            const statusClass = isOnline ? 'status-online' : 'status-offline';
+            const statusText = isOnline ? '🟢 СЕРВЕР ОНЛАЙН' : '🔴 СЕРВЕР ОФФЛАЙН';
+            
+            let playersHtml = '';
+            if (isOnline && data.players && data.players.list && data.players.list.length > 0) {
+                playersHtml = `
+                    <div class="player-list">
+                        <h3>👥 Игроки онлайн (${data.players.list.length})</h3>
+                        <div class="player-names">
+                            ${data.players.list.map(player => `<span class="player-name">${player}</span>`).join('')}
+                        </div>
+                    </div>
+                `;
+            } else if (isOnline && data.players && data.players.online > 0) {
+                playersHtml = `
+                    <div class="player-list">
+                        <h3>👥 На сервере ${data.players.online} игрок(ов)</h3>
+                        <p style="opacity: 0.9;">(список недоступен)</p>
+                    </div>
+                `;
+            }
+
+            const motdText = Array.isArray(data.motd) ? data.motd.join(' ') : (data.motd || 'Добро пожаловать!');
+
+            container.innerHTML = `
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">📊 Статус</span>
+                        <span class="info-value">
+                            <span class="status-badge ${statusClass}">${statusText}</span>
+                        </span>
+                    </div>
+                    
+                    <div class="info-item">
+                        <span class="info-label">🎯 Версия</span>
+                        <span class="info-value">${data.version || 'Неизвестно'}</span>
+                    </div>
+                    
+                    <div class="info-item">
+                        <span class="info-label">⚙️ Софт</span>
+                        <span class="info-value">${data.software || 'Vanilla'}</span>
+                    </div>
+                    
+                    <div class="info-item">
+                        <span class="info-label">👥 Игроки</span>
+                        <span class="info-value">${data.players ? data.players.online : 0}/${data.players ? data.players.max : 0}</span>
+                    </div>
+                    
+                    <div class="info-item">
+                        <span class="info-label">📝 Описание</span>
+                        <span class="info-value">${motdText}</span>
+                    </div>
+                    
+                    <div class="info-item">
+                        <span class="info-label">🌐 Порт</span>
+                        <span class="info-value">${data.port || '25565'}</span>
+                    </div>
+                </div>
+                
+                ${playersHtml}
+                
+                <div class="update-time">
+                    ⏰ Обновлено: ${new Date().toLocaleTimeString('ru-RU')}
+                    <br>
+                    <small>Сервер Privet_Sergeyushka ❤️</small>
+                </div>
+                
+                <div class="api-status">
+                    Данные получены от: ${data.source || 'внешнего API'}
+                </div>
+            `;
+        }
+
+        // Автоматическая проверка при загрузке
+        window.addEventListener('load', () => {
+            setTimeout(checkServer, 1000);
+        });
+
+        // Автообновление каждые 30 секунд
+        setInterval(() => {
+            const button = document.getElementById('check-server');
+            if (!button.disabled) {
+                checkServer();
+            }
+        }, 30000);
+    </script>
+</body>
+</html>
